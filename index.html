@@ -116,10 +116,13 @@ svg#map.dragging{cursor:grabbing}
 .zoom button:focus-visible{outline:2px solid var(--hl)}
 .ptlegend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:11px;color:var(--muted);margin-top:6px}
 .ptlegend .pk{display:inline-flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
-.tabs{display:flex;border-bottom:1px solid var(--line)}
-.tabs button{flex:1;font:inherit;font-size:13px;padding:9px 6px;border:0;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
-.tabs button small{font-size:11px;font-variant-numeric:tabular-nums}
-.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tabs{display:flex;margin:12px 14px 2px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.tabs button{flex:1;font:inherit;font-size:13px;padding:8px 6px;border:0;background:transparent;color:var(--fg);cursor:pointer}
+.tabs button+button{border-left:1px solid var(--line)}
+.tabs button small{font-size:11px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.tabs button:hover{background:var(--c0)}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--surface);font-weight:600}
+.tabs button[aria-selected="true"] small{color:var(--surface);opacity:.85}
 .tabs button:focus-visible{outline:2px solid var(--hl);outline-offset:-2px}
 .ledger-h{gap:8px;align-items:center;flex-wrap:wrap}
 .only{display:inline-flex;gap:4px;align-items:center;cursor:pointer;color:var(--fg)}
