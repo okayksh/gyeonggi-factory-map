@@ -169,6 +169,7 @@ dl.fac small{color:var(--muted)}
 .nb.gg{font-weight:600}
 .nb .nv{text-align:right;font-variant-numeric:tabular-nums}
 .nb .nv small{color:var(--muted);margin-left:6px;font-weight:400}
+header .sub.how{font-size:13px}
 .src{font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
 .detail h2 small{font-weight:500}
 </style>
@@ -177,9 +178,10 @@ dl.fac small{color:var(--muted)}
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow">팩토리온 등록공장 · 2025.12.31 기준</div>
+    <div class="eyebrow">팩토리온 · 경기데이터드림 등록공장 · 2025.12.31 기준</div>
     <h1>경기도 31개 시·군 공장 분포</h1>
-    <p class="sub">한국산업단지공단 팩토리온 「전국공장등록현황」 원자료에서 경기도 공장 78,930개를 공장관리번호 기준으로 중복 없이 세어 시·군·업종·규모·산업단지·지식산업센터별로 집계했습니다. 업종과 규모를 고르면 지도가 다시 칠해지고, 산업단지·지식산업센터 탭을 고르면 위치가 점으로 표시됩니다.</p>
+    <p class="sub">한국산업단지공단 팩토리온 「전국공장등록현황」 원자료에서 경기도 공장 78,930개를 공장관리번호 기준으로 중복 없이 세어 시·군·업종·규모·산업단지·지식산업센터별로 집계했습니다. 산업단지·지식산업센터 위치와 기업 검색 정보는 경기데이터드림 「공장등록 현황」을 썼습니다. 두 자료 모두 2025년 12월 31일 기준입니다.</p>
+    <p class="sub how">업종과 규모를 고르면 지도가 다시 칠해집니다. 오른쪽에서 산업단지·지식산업센터를 고르면 위치가 점으로 표시되고, 기업 검색 창에 회사명이나 생산품을 넣으면 해당 공장을 찾아 지도에 보여줍니다.</p>
   </header>
 
   <div class="stats" id="stats"></div>
@@ -687,8 +689,8 @@ document.querySelectorAll("#natseg button").forEach(b=>b.addEventListener("click
 renderNat();
 
 document.getElementById("stats").innerHTML=[
-  [ggShare(0).toFixed(1)+"%",`전국 등록 공장 ${fmt(NSUMALL[0])}개 중 경기도 비중`],
-  [fmt(TOT.n),"경기도 등록 공장(개)"],[fmt(TOT.emp),`종업원(명) · 전국의 ${ggShare(1).toFixed(1)}%`],
+  [fmt(TOT.n),"경기도 등록 공장(개)"],
+  [ggShare(0).toFixed(1)+"%",`전국 등록 공장 ${fmt(NSUMALL[0])}개 중 경기도 비중`],[fmt(TOT.emp),`종업원(명) · 전국의 ${ggShare(1).toFixed(1)}%`],
   [(TOT.small/TOT.n*100).toFixed(1)+"%","소기업 비중"],
   [(top3.reduce((s,[,v])=>s+v.n,0)/TOT.n*100).toFixed(1)+"%",`상위 3곳 집중도 (${top3.map(x=>x[0].replace(/시$/,"")).join("·")})`],
   [(inCx/TOT.n*100).toFixed(1)+"%","산업단지 입주 비중"],
