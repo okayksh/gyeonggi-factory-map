@@ -169,7 +169,8 @@ dl.fac small{color:var(--muted)}
 .nb.gg{font-weight:600}
 .nb .nv{text-align:right;font-variant-numeric:tabular-nums}
 .nb .nv small{color:var(--muted);margin-left:6px;font-weight:400}
-header .sub.how{font-size:13px}
+header .how{margin:4px 0 0;padding-left:1.2em;display:grid;gap:2px;font-size:13px;color:var(--muted)}
+footer b{color:var(--fg);font-weight:600}
 .src{font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
 .detail h2 small{font-weight:500}
 </style>
@@ -180,8 +181,11 @@ header .sub.how{font-size:13px}
   <header>
     <div class="eyebrow">팩토리온 · 경기데이터드림 등록공장 · 2025.12.31 기준</div>
     <h1>경기도 31개 시·군 공장 분포</h1>
-    <p class="sub">한국산업단지공단 팩토리온 「전국공장등록현황」 원자료에서 경기도 공장 78,930개를 공장관리번호 기준으로 중복 없이 세어 시·군·업종·규모·산업단지·지식산업센터별로 집계했습니다. 산업단지·지식산업센터 위치와 기업 검색 정보는 경기데이터드림 「공장등록 현황」을 썼습니다. 두 자료 모두 2025년 12월 31일 기준입니다.</p>
-    <p class="sub how">업종과 규모를 고르면 지도가 다시 칠해집니다. 오른쪽에서 산업단지·지식산업센터를 고르면 위치가 점으로 표시되고, 기업 검색 창에 회사명이나 생산품을 넣으면 해당 공장을 찾아 지도에 보여줍니다.</p>
+    <ul class="how">
+      <li>업종, 규모, 공장 수, 종업원 수, 시·군 내 비중, 특화도 선택 시 지도에 색(6분위)으로 표시</li>
+      <li>우측의 산업단지, 지식산업센터 선택 시 지도에 점으로 표시</li>
+      <li>기업명, 생산품 검색 가능</li>
+    </ul>
   </header>
 
   <div class="stats" id="stats"></div>
@@ -251,13 +255,14 @@ header .sub.how{font-size:13px}
   <div class="ns" id="ns"></div>
 
   <footer>
-    <div>출처: 한국산업단지공단 팩토리온 <a href="https://www.factoryon.go.kr/bbs/frtblRecsroomBbsDetail.do?selectBbsSn=1048&amp;searchBbsMenu=S" target="_blank" rel="noopener">(2025.12월말기준) 전국공장등록현황</a> (2026.1.5 게시). 위치 좌표는 경기데이터드림 <a href="https://data.gg.go.kr/portal/data/service/selectServicePage.do?infId=794V0223GQQ9O1P4WAP221637079&amp;infSeq=1" target="_blank" rel="noopener">공장등록 현황</a>(2025.12.31 기준)의 공장별 WGS84 좌표를 주소로 연결해 썼습니다. 등록 공장 기준이며 미등록 소규모 사업장은 빠져 있습니다.</div>
-    <div>집계: 시군구명 기준(원자료 ‘여주군’ 1건은 여주시에 합산). 업종은 대표업종 중분류(KSIC 2자리, 10~34번 제조업). 규모는 원자료의 공장규모(대기업·중견기업·중기업·소기업). 북부는 고양·남양주·파주·의정부·양주·구리·포천·동두천·가평·연천 10개 시·군.</div>
-    <div>특화도(입지계수, LQ) = (시·군 내 선택 공장 비중) ÷ (경기도 전체에서 선택 공장 비중). 1보다 크면 도 평균보다 몰려 있다는 뜻입니다. 공장 수·비중의 단계 경계값은 31개 시·군 분포의 6분위로 정했습니다.</div>
-    <div>산업단지·지식산업센터 위치: 단지는 입주 공장 최대 8곳, 센터는 최대 3곳의 좌표를 평균한 대표 지점입니다(주소 매칭률 93%). 시·군 경계를 넘는 단지(예: 시화국가산업단지)는 시·군 구역별로 따로 셉니다. 위치를 찾지 못한 단지 11곳(대부분 공장 1~3개)과 센터 26곳은 목록에만 있고, 소속 단지 위치로 대신한 센터 4곳은 ‘대략 위치’로 표시합니다.</div>
-    <div>전국 비교: 같은 팩토리온 원자료의 17개 시·도 등록 공장 220,705개를 공장관리번호 기준으로 중복 없이 센 값입니다.</div>
-    <div>기업 검색: 경기데이터드림 「공장등록 현황」(2025.12.31 기준)의 공장별 회사명·주소·전화번호·업종·생산품·규모·종업원 수·좌표에, 팩토리온 「전국공장등록현황」의 소속 산업단지·지식산업센터를 회사명과 주소로 연결했습니다. 대표자명은 원자료에서 개인정보로 제외된 항목이라 넣지 않았습니다. 등록 자료로 현재 영업·가동 여부와 다를 수 있습니다.</div>
-    <div>경계: 통계청 2013년 시군구 경계(southkorea-maps) 단순화본, 구 단위는 시로 합침.</div>
+    <div><b>출처1:</b> 한국산업단지공단 팩토리온(2025.12월말기준) <a href="https://www.factoryon.go.kr/bbs/frtblRecsroomBbsDetail.do?selectBbsSn=1048&amp;searchBbsMenu=S" target="_blank" rel="noopener">전국공장등록현황</a>(2026.1.5 게시)</div>
+    <div><b>출처2:</b> 경기데이터드림 <a href="https://data.gg.go.kr/portal/data/service/selectServicePage.do?infId=794V0223GQQ9O1P4WAP221637079&amp;infSeq=1" target="_blank" rel="noopener">공장등록 현황</a>(2025.12.31 기준)</div>
+    <div><b>기준:</b> 등록 공장 기준이며, 미등록 소규모 사업장은 제외. 출처에 등록된 자료 기준이므로 현재 영업·가동 여부와 다를 수 있음</div>
+    <div><b>업종:</b> 대표업종 중분류(KSIC 2자리, 10~34번 제조업)</div>
+    <div><b>북부:</b> 고양·남양주·파주·의정부·양주·구리·포천·동두천·가평·연천 10개 시·군</div>
+    <div><b>특화도</b>(입지계수, LQ) = (시·군 내 선택 공장 비중) ÷ (경기도 전체에서 선택 공장 비중). 1보다 크면 도 평균보다 몰려 있다는 뜻. 공장 수·비중의 단계 경계값은 31개 시·군 분포의 6분위로 정함</div>
+    <div><b>산업단지·지식산업센터 위치:</b> 단지는 입주 공장 최대 8곳, 센터는 최대 3곳의 좌표를 평균한 대표 지점(주소 매칭률 93%). 시·군 경계를 넘는 단지(예: 시화국가산업단지)는 시·군 구역별로 따로 셈. 위치를 찾지 못한 단지 11곳(대부분 공장 1~3개)과 센터 26곳은 목록에만 있고, 소속 단지 위치로 대신한 센터 4곳은 ‘대략 위치’로 표시</div>
+    <div><b>경계:</b> 통계청 2013년 시군구 경계(southkorea-maps) 단순화본, 구 단위는 시로 합침</div>
   </footer>
 </div>
 
