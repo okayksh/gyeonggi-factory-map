@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="팩토리온 2025.12월말 등록공장 기준 경기도 시·군·업종·규모별 공장 분포와 산업단지·지식산업센터 위치 지도">
+<meta name="description" content="팩토리온·경기데이터드림 2025.12.31 기준 경기도 공장 분포 지도: 시·군·업종·규모별 집계, 산업단지·지식산업센터 위치, 기업 검색">
 <style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 <title>경기도 공장 분포 지도</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -136,6 +136,23 @@ svg#map.dragging{cursor:grabbing}
 .crumb button:focus-visible{outline:2px solid var(--hl)}
 .kind{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--c0);color:var(--accent);font-weight:600}
 .note{font-size:11.5px;color:var(--muted)}
+.search{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.search label{font-size:12px;color:var(--muted)}
+.search input{font:inherit;font-size:14px;flex:1 1 260px;max-width:460px;min-width:0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.search input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.search #qinfo{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tabs button{padding-inline:4px;white-space:nowrap}
+.row.fr{grid-template-columns:2.4em minmax(0,1fr) 4.2em}
+.pt.fp{fill:var(--pt-fill);stroke:var(--pt)}
+.pt.fp.on{fill:var(--hl);stroke:var(--fg);stroke-width:2}
+dl.fac{display:grid;grid-template-columns:4em minmax(0,1fr);gap:6px 10px;margin:0;font-size:13px}
+dl.fac dt{color:var(--muted)}
+dl.fac dd{margin:0;min-width:0;overflow-wrap:anywhere}
+dl.fac small{color:var(--muted)}
+.sel{user-select:text}
+.copy{font:inherit;font-size:11.5px;padding:1px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);cursor:pointer;margin-left:4px}
+.copy:focus-visible{outline:2px solid var(--hl)}
+.src{font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
 .detail h2 small{font-weight:500}
 </style>
 
@@ -165,6 +182,11 @@ svg#map.dragging{cursor:grabbing}
     <div class="seg" role="group" aria-label="지표 선택" id="seg"></div>
   </div>
   <div class="chips" id="chips" aria-label="업종 바로가기"></div>
+  <div class="search">
+    <label for="q">기업 검색</label>
+    <input id="q" type="search" placeholder="회사명 또는 생산품 (예: 대진, 금형, 마스크)" autocomplete="off" spellcheck="false">
+    <span id="qinfo"></span>
+  </div>
 
   <div class="main">
     <div class="mapbox" id="mapbox">
@@ -185,6 +207,7 @@ svg#map.dragging{cursor:grabbing}
           <button role="tab" id="t-city" data-l="city" aria-selected="true">시·군</button>
           <button role="tab" id="t-cx" data-l="cx" aria-selected="false">산업단지 <small id="ncx"></small></button>
           <button role="tab" id="t-kc" data-l="kc" aria-selected="false">지식산업센터 <small id="nkc"></small></button>
+          <button role="tab" id="t-search" data-l="search" aria-selected="false">기업 검색</button>
         </div>
         <div class="ledger-h"><span id="lh"></span><label class="only" id="onlywrap" hidden><input type="checkbox" id="only"> <span id="onlylbl">선택한 시·군만</span></label></div>
         <div class="rows" id="rows"></div>
@@ -199,6 +222,7 @@ svg#map.dragging{cursor:grabbing}
     <div>집계: 시군구명 기준(원자료 ‘여주군’ 1건은 여주시에 합산). 업종은 대표업종 중분류(KSIC 2자리, 10~34번 제조업). 규모는 원자료의 공장규모(대기업·중견기업·중기업·소기업). 북부는 고양·남양주·파주·의정부·양주·구리·포천·동두천·가평·연천 10개 시·군.</div>
     <div>특화도(입지계수, LQ) = (시·군 내 선택 공장 비중) ÷ (경기도 전체에서 선택 공장 비중). 1보다 크면 도 평균보다 몰려 있다는 뜻입니다. 공장 수·비중의 단계 경계값은 31개 시·군 분포의 6분위로 정했습니다.</div>
     <div>산업단지·지식산업센터 위치: 단지는 입주 공장 최대 8곳, 센터는 최대 3곳의 좌표를 평균한 대표 지점입니다(주소 매칭률 93%). 시·군 경계를 넘는 단지(예: 시화국가산업단지)는 시·군 구역별로 따로 셉니다. 위치를 찾지 못한 단지 11곳(대부분 공장 1~3개)과 센터 26곳은 목록에만 있고, 소속 단지 위치로 대신한 센터 4곳은 ‘대략 위치’로 표시합니다.</div>
+    <div>기업 검색: 경기데이터드림 「공장등록 현황」(2025.12.31 기준)의 공장별 회사명·주소·전화번호·업종·생산품·규모·종업원 수·좌표에, 팩토리온 「전국공장등록현황」의 소속 산업단지·지식산업센터를 회사명과 주소로 연결했습니다. 대표자명은 원자료에서 개인정보로 제외된 항목이라 넣지 않았습니다. 등록 자료로 현재 영업·가동 여부와 다를 수 있습니다.</div>
     <div>경계: 통계청 2013년 시군구 경계(southkorea-maps) 단순화본, 구 단위는 시로 합침.</div>
   </footer>
 </div>
@@ -241,6 +265,31 @@ const F_M = {
   lq:{label:"특화도(LQ)", unit:"배", f:v=>v.toFixed(2), breaks:[0.5,0.8,1.2,1.6,2.5]}
 };
 let ind="all", scale="all", metric="n", sel="화성시", layer="city", selPt=null, METRIC=ALL_M, Ni=GG_TOTAL;
+// ---------- company search data (loaded on demand) ----------
+const FAC_URL="factories.txt";
+const SRC_LINE="출처: 경기데이터드림 「공장등록 현황」, 한국산업단지공단 팩토리온 「전국공장등록현황」(2025.12.31 기준). 등록 자료로 현재 영업·가동 여부와 다를 수 있습니다.";
+let FAC=null, facPromise=null, results=[], selFac=null, query="";
+const keyOf=s=>String(s||"").toLowerCase().replace(/\(주\)|㈜|주식회사|\(유\)|유한회사|\s|[.,·\-()]/g,"");
+function loadFac(){
+  if(FAC) return Promise.resolve(FAC);
+  if(!facPromise) facPromise=(async()=>{
+    const r=await fetch(FAC_URL); if(!r.ok) throw new Error("HTTP "+r.status);
+    const u=new Uint8Array(await r.arrayBuffer());
+    let txt;
+    let g=u;
+    if(u[0]===0x48&&u[1]===0x34){ // base64 text of gzip
+      const bin=atob(new TextDecoder().decode(u).trim()); g=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) g[i]=bin.charCodeAt(i);
+    }
+    if(g[0]===0x1f&&g[1]===0x8b) txt=await new Response(new Blob([g]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+    else txt=new TextDecoder().decode(g);
+    const j=JSON.parse(txt);
+    j.F.forEach(f=>{f.kn=keyOf(f[0]); f.kp=keyOf(f[6]);});
+    FAC=j; return j;
+  })().catch(e=>{facPromise=null; throw e;});
+  return facPromise;
+}
+// record: [name, cityIdx, addr, phone, indCode, indNameIdx, prod, scaleIdx, emp, cxIdx, kcIdx, lat, lng]
+const SCL=["대기업","중견기업","중기업","소기업"];
 const filtered = () => ind!=="all" || scale!=="all";
 const fname = () => [scale!=="all"?SCN[scale]:"", ind!=="all"?IND[ind]:""].filter(Boolean).join(" ");
 
@@ -347,6 +396,24 @@ function drawPoints(){
   gP.innerHTML="";
   const ptl=document.getElementById("ptlegend");
   if(layer==="city"){ ptl.hidden=true; return; }
+  if(layer==="search"){
+    const shown=results.slice(0,600).filter(f=>f[11]);
+    shown.forEach(f=>{
+      const [x,y]=P([f[12],f[11]]);
+      const c=document.createElementNS(NS,"circle"); const on=f===selFac;
+      c.dataset.r=on?6:3; c.setAttribute("cx",x.toFixed(1)); c.setAttribute("cy",y.toFixed(1)); c.setAttribute("r",((on?6:3)/Math.sqrt(Z.k)).toFixed(2));
+      c.setAttribute("class","pt fp"+(on?" on":"")); c.setAttribute("tabindex","0"); c.setAttribute("aria-label",f[0]);
+      c.addEventListener("mousemove",e=>showTip(e,`<b>${esc(f[0])}</b><br>${esc(FAC.C[f[1]])} · ${esc(FAC.I[f[5]]||"")}<br>종업원 ${fmt(f[8])}명`));
+      c.addEventListener("mouseleave",()=>tip.hidden=true);
+      c.addEventListener("click",e=>{e.stopPropagation(); if(!dragMoved) selectFac(f);});
+      c.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectFac(f)}});
+      gP.appendChild(c); if(on) gP.appendChild(c);
+    });
+    if(selFac&&selFac[11]){ const c=[...gP.children].find(n=>n.classList.contains("on")); if(c) gP.appendChild(c); }
+    ptl.hidden=!results.length;
+    ptl.innerHTML=results.length?`<span>검색 결과 위치${results.length>600?" (상위 600곳만 표시)":""} · 진한 점이 선택한 공장</span>`:"";
+    return;
+  }
   const list=PTS[layer].filter(p=>p.ll).sort((a,b)=>b.n-a.n);
   const kr = layer==="cx" ? 0.3 : 0.55;
   list.forEach(p=>{
@@ -412,6 +479,17 @@ function renderList(){
     rows.querySelectorAll(".row").forEach(r=>r.addEventListener("click",()=>selectCity(r.dataset.k)));
     return;
   }
+  if(layer==="search"){
+    if(!FAC){ lh.textContent="기업 검색"; rows.innerHTML=`<div class="empty">${facPromise?"공장 자료를 불러오는 중입니다…":"위 검색창에 회사명이나 생산품을 입력하세요. 경기도 등록 공장 약 7만 8천 곳에서 찾습니다."}</div>`; return; }
+    if(!query){ lh.textContent="기업 검색"; rows.innerHTML=`<div class="empty">위 검색창에 회사명이나 생산품을 입력하세요. 회사명이 일치하는 공장이 먼저 나오고, 생산품이 일치하는 공장이 뒤에 나옵니다.</div>`; return; }
+    const shown=results.slice(0,300);
+    lh.textContent=`‘${query}’ 검색 결과 · ${fmt(results.length)}곳${results.length>300?" (상위 300곳 표시)":""}`;
+    rows.innerHTML = shown.length ? shown.map((f,i)=>
+      `<button class="row fr${f===selFac?" on":""}" data-i="${i}"><span class="r">${String(i+1).padStart(3,"0")}</span><span class="nm"><span class="pn">${esc(f[0])}</span><small>${esc(FAC.C[f[1]])} · ${esc(FAC.I[f[5]]||"업종 미기재")}${f[11]?"":" · 위치 없음"}</small></span><span class="v">${fmt(f[8])}명</span></button>`).join("")
+      : `<div class="empty">‘${esc(query)}’와 일치하는 공장이 없습니다${onlyBox.checked?` (${sel} 안에서 찾음. 체크를 풀면 경기도 전체에서 찾습니다)`:""}.</div>`;
+    rows.querySelectorAll(".row").forEach(r=>r.addEventListener("click",()=>{const f=shown[+r.dataset.i]; selectFac(f); if(f[11]) zoomTo([f[11],f[12]], Math.max(Z.k,6));}));
+    return;
+  }
   let list=PTS[layer].slice().sort((a,b)=>b.n-a.n);
   if(onlyBox.checked) list=list.filter(p=>p.city===sel);
   const max=list.length?list[0].n:1;
@@ -421,13 +499,57 @@ function renderList(){
     : `<div class="empty">${sel}에는 등록된 ${layer==="cx"?"산업단지":"지식산업센터"}가 없습니다.</div>`;
   rows.querySelectorAll(".row").forEach(r=>r.addEventListener("click",()=>{const p=PTS[layer][+r.dataset.i]; selectPoint(p); if(p.ll) zoomTo(p.ll, Math.max(Z.k, layer==="kc"?5:3.5));}));
 }
-onlyBox.addEventListener("change",renderList);
+onlyBox.addEventListener("change",()=>{ if(layer==="search") runSearch(); else renderList(); });
+
+function runSearch(){
+  const qinfo=document.getElementById("qinfo");
+  if(!FAC){ renderList(); return; }
+  const k=keyOf(query);
+  if(!k){ results=[]; qinfo.textContent=""; }
+  else {
+    const byName=[], byProd=[];
+    for(const f of FAC.F){
+      if(onlyBox.checked && FAC.C[f[1]]!==sel) continue;
+      if(f.kn.includes(k)) byName.push(f); else if(k.length>=2 && f.kp.includes(k)) byProd.push(f);
+    }
+    const sortN=(a,b)=>(b.kn.startsWith(k)-a.kn.startsWith(k))||(b[8]-a[8]);
+    byName.sort(sortN); byProd.sort((a,b)=>b[8]-a[8]);
+    results=byName.concat(byProd);
+    qinfo.textContent=`회사명 일치 ${fmt(byName.length)}곳 · 생산품 일치 ${fmt(byProd.length)}곳`;
+  }
+  if(selFac && !results.includes(selFac)) selFac=null;
+  drawPoints(); renderList(); renderDetail();
+}
+let qTimer=null;
+const qEl=document.getElementById("q");
+qEl.addEventListener("focus",()=>{ if(!FAC) loadFac().then(runSearch).catch(showLoadErr); });
+qEl.addEventListener("input",()=>{
+  query=qEl.value.trim();
+  if(layer!=="search") setLayer("search");
+  clearTimeout(qTimer); qTimer=setTimeout(()=>{ if(FAC) runSearch(); else { renderList(); loadFac().then(runSearch).catch(showLoadErr); } },180);
+});
+function showLoadErr(e){
+  document.getElementById("rows").innerHTML=`<div class="empty">공장 자료(${FAC_URL})를 불러오지 못했습니다. 페이지를 새로고침해 다시 시도해 주세요. (${esc(e.message||e)})</div>`;
+}
 
 function setLayer(l){
   layer=l; if(selPt && selPt.kind!==l) selPt=null;
+  if(l!=="search") selFac=null;
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.l===l));
+  if(l==="search" && !FAC){ renderList(); loadFac().then(runSearch).catch(showLoadErr); if(!qEl.value) qEl.focus({preventScroll:true}); }
   drawPoints(); renderList(); renderDetail();
 }
+function selectFac(f){
+  selFac=f; selPt=null; sel=FAC.C[f[1]];
+  Object.entries(shapes).forEach(([k,s])=>{s.classList.toggle("on",k===sel); if(k===sel) s.parentNode.appendChild(s)});
+  drawPoints(); renderDetail(); renderList();
+  const on=document.querySelector("#rows .row.on"); if(on&&on.scrollIntoView) on.scrollIntoView({block:"nearest"});
+}
+function copyText(btn,text){
+  const done=()=>{btn.textContent="복사됨"; setTimeout(()=>btn.textContent="복사",1400);};
+  try{ navigator.clipboard.writeText(text).then(done,()=>{selectNode(btn.previousElementSibling);}); }catch(e){ selectNode(btn.previousElementSibling); }
+}
+function selectNode(n){ try{const r=document.createRange(); r.selectNodeContents(n); const s=getSelection(); s.removeAllRanges(); s.addRange(r);}catch(e){} }
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>setLayer(b.dataset.l)));
 
 // ---------- detail ----------
@@ -443,6 +565,25 @@ function indBars(list){
 }
 function renderDetail(){
   const el=document.getElementById("detail");
+  if(selFac){
+    const f=selFac, city=FAC.C[f[1]], cx=f[9]>=0?FAC.X[f[9]]:"", kc=f[10]>=0?FAC.K[f[10]]:"";
+    el.innerHTML=`
+      <div class="crumb"><button id="backcity">← ${esc(city)} 보기</button><span class="kind">${SCL[f[7]]||"규모 미기재"}</span></div>
+      <h2>${esc(f[0])}<small>${esc(city)}${cx?" · "+esc(cx):""}</small></h2>
+      <dl class="fac">
+        <dt>주소</dt><dd><span class="sel">${esc(f[2]||"미기재")}</span></dd>
+        <dt>전화</dt><dd>${f[3]?`<span class="sel">${esc(f[3])}</span> <button class="copy" id="cp">복사</button>`:"미기재"}</dd>
+        <dt>업종</dt><dd>${esc(FAC.I[f[5]]||"미기재")}${f[4]?` <small>(${esc(f[4])})</small>`:""}</dd>
+        <dt>생산품</dt><dd>${esc(f[6]||"미기재")}</dd>
+        <dt>종업원</dt><dd>${fmt(f[8])}명</dd>
+        <dt>입지</dt><dd>${cx?esc(cx):"개별입지"}${kc?` · ${esc(kc)}`:""}</dd>
+      </dl>
+      ${f[11]?"":`<div class="scale-l"><span>주소 좌표가 없어 지도에는 표시되지 않습니다.</span></div>`}
+      <div class="src">${SRC_LINE}</div>`;
+    document.getElementById("backcity").onclick=()=>{ setLayer("city"); selectCity(city); };
+    const cp=document.getElementById("cp"); if(cp) cp.onclick=()=>copyText(cp,f[3]);
+    return;
+  }
   if(selPt){
     const p=selPt;
     el.innerHTML=`
@@ -476,8 +617,9 @@ function renderDetail(){
   el.querySelectorAll(".indjump").forEach(b=>b.addEventListener("click",()=>{ind=b.dataset.c; applyFilter();}));
 }
 function selectCity(name){
-  sel=name; selPt=null;
+  sel=name; selPt=null; selFac=null;
   Object.entries(shapes).forEach(([k,p])=>{p.classList.toggle("on",k===name); if(k===name) p.parentNode.appendChild(p)});
+  if(layer==="search" && onlyBox.checked && FAC){ runSearch(); return; }
   drawPoints(); renderDetail(); renderList();
 }
 function selectPoint(p){
