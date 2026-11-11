@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="팩토리온·경기데이터드림 2025.12.31 기준 경기도 공장 분포 지도: 시·군·업종·규모별 집계, 산업단지·지식산업센터 위치, 기업 검색">
+<meta name="description" content="팩토리온·경기데이터드림 2025.12.31 기준 경기도 공장 분포 지도: 전국 대비 비중, 시·군·업종·규모별 집계, 산업단지·지식산업센터 위치, 기업 검색">
 <style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 <title>경기도 공장 분포 지도</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -152,6 +152,23 @@ dl.fac small{color:var(--muted)}
 .sel{user-select:text}
 .copy{font:inherit;font-size:11.5px;padding:1px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);cursor:pointer;margin-left:4px}
 .copy:focus-visible{outline:2px solid var(--hl)}
+.nat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:14px}
+.nat-head{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.nat-head h2{margin:0;font-size:17px}
+.nat-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:20px;align-items:start}
+@media (max-width:760px){.nat-body{grid-template-columns:minmax(0,1fr)}}
+.nat-share{display:grid;gap:4px}
+.nat-share b{font-size:44px;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.nat-share span{font-size:13px}
+.nat-share .nat-sub{color:var(--muted);font-size:12px}
+.nat-bars{display:grid;gap:4px;min-width:0}
+.nb{display:grid;grid-template-columns:3.2em minmax(0,1fr) 8.4em;gap:8px;align-items:center;font-size:12.5px}
+.nb .t{height:9px;border-radius:4px;background:var(--c0);overflow:hidden}
+.nb .t i{display:block;height:100%;background:var(--c2)}
+.nb.gg .t i{background:var(--accent)}
+.nb.gg{font-weight:600}
+.nb .nv{text-align:right;font-variant-numeric:tabular-nums}
+.nb .nv small{color:var(--muted);margin-left:6px;font-weight:400}
 .src{font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
 .detail h2 small{font-weight:500}
 </style>
@@ -215,6 +232,20 @@ dl.fac small{color:var(--muted)}
     </div>
   </div>
 
+  <section class="nat" aria-labelledby="nat-h">
+    <div class="nat-head">
+      <h2 id="nat-h">전국 속 경기도</h2>
+      <div class="seg" role="group" aria-label="전국 비교 지표" id="natseg">
+        <button data-k="0" aria-pressed="true">등록 공장 수</button>
+        <button data-k="1" aria-pressed="false">종업원 수</button>
+      </div>
+    </div>
+    <div class="nat-body">
+      <div class="nat-share" id="natshare"></div>
+      <div class="nat-bars" id="natbars"></div>
+    </div>
+  </section>
+
   <div class="ns" id="ns"></div>
 
   <footer>
@@ -222,6 +253,7 @@ dl.fac small{color:var(--muted)}
     <div>집계: 시군구명 기준(원자료 ‘여주군’ 1건은 여주시에 합산). 업종은 대표업종 중분류(KSIC 2자리, 10~34번 제조업). 규모는 원자료의 공장규모(대기업·중견기업·중기업·소기업). 북부는 고양·남양주·파주·의정부·양주·구리·포천·동두천·가평·연천 10개 시·군.</div>
     <div>특화도(입지계수, LQ) = (시·군 내 선택 공장 비중) ÷ (경기도 전체에서 선택 공장 비중). 1보다 크면 도 평균보다 몰려 있다는 뜻입니다. 공장 수·비중의 단계 경계값은 31개 시·군 분포의 6분위로 정했습니다.</div>
     <div>산업단지·지식산업센터 위치: 단지는 입주 공장 최대 8곳, 센터는 최대 3곳의 좌표를 평균한 대표 지점입니다(주소 매칭률 93%). 시·군 경계를 넘는 단지(예: 시화국가산업단지)는 시·군 구역별로 따로 셉니다. 위치를 찾지 못한 단지 11곳(대부분 공장 1~3개)과 센터 26곳은 목록에만 있고, 소속 단지 위치로 대신한 센터 4곳은 ‘대략 위치’로 표시합니다.</div>
+    <div>전국 비교: 같은 팩토리온 원자료의 17개 시·도 등록 공장 220,705개를 공장관리번호 기준으로 중복 없이 센 값입니다.</div>
     <div>기업 검색: 경기데이터드림 「공장등록 현황」(2025.12.31 기준)의 공장별 회사명·주소·전화번호·업종·생산품·규모·종업원 수·좌표에, 팩토리온 「전국공장등록현황」의 소속 산업단지·지식산업센터를 회사명과 주소로 연결했습니다. 대표자명은 원자료에서 개인정보로 제외된 항목이라 넣지 않았습니다. 등록 자료로 현재 영업·가동 여부와 다를 수 있습니다.</div>
     <div>경계: 통계청 2013년 시군구 경계(southkorea-maps) 단순화본, 구 단위는 시로 합침.</div>
   </footer>
@@ -634,8 +666,29 @@ const TOT={n:0,emp:0,small:0}; const NSUM={N:{n:0,emp:0},S:{n:0,emp:0}};
 Object.entries(D).forEach(([k,v])=>{TOT.n+=v.n;TOT.emp+=v.emp;TOT.small+=v.small;const g=NORTH.has(k)?"N":"S";NSUM[g].n+=v.n;NSUM[g].emp+=v.emp});
 const top3=Object.entries(D).sort((a,b)=>b[1].n-a[1].n).slice(0,3);
 const inCx=PTS.cx.reduce((s,p)=>s+p.n,0), inKc=PTS.kc.reduce((s,p)=>s+p.n,0);
+// ---------- national comparison ----------
+const NAT = {"서울특별시":[11399,149528,10936,36],"부산광역시":[11425,176569,10743,47],"대구광역시":[9166,145606,8597,45],"인천광역시":[14146,226192,13410,77],"광주광역시":[5024,84444,4757,27],"대전광역시":[4181,70314,3926,36],"울산광역시":[3263,147288,2752,104],"세종특별자치시":[919,23740,814,15],"경기도":[78930,1259720,74984,330],"충청북도":[10475,239536,9400,153],"충청남도":[12513,350226,11147,168],"전라남도":[8371,129154,7894,81],"경상북도":[16697,338269,15467,155],"경상남도":[20953,418173,19473,151],"제주특별자치도":[781,9160,758,6],"강원특별자치도":[4338,57929,4100,21],"전북특별자치도":[8124,135269,7532,79]}; // 시도: [공장 수, 종업원, 소기업, 대·중견]
+const NSUMALL=[0,0]; Object.values(NAT).forEach(v=>{NSUMALL[0]+=v[0];NSUMALL[1]+=v[1];});
+const ggShare=k=>NAT["경기도"][k]/NSUMALL[k]*100;
+const SHORT=s=>s.replace(/특별자치시|특별자치도|특별시|광역시/,"").replace(/^(충청|전라|경상)(남|북)도$/,(m,a,b)=>({충청:"충",전라:"전",경상:"경"}[a]+b)).replace(/도$/,"");
+let natK=0;
+function renderNat(){
+  const k=natK, arr=Object.entries(NAT).sort((a,b)=>b[1][k]-a[1][k]), max=arr[0][1][k];
+  const unit=k?"명":"개";
+  document.getElementById("natshare").innerHTML=`
+    <b>${ggShare(k).toFixed(1)}%</b>
+    <span>전국 ${k?"등록 공장 종업원":"등록 공장"} ${fmt(NSUMALL[k])}${unit} 가운데 경기도 ${fmt(NAT["경기도"][k])}${unit}</span>
+    <span class="nat-sub">2위 ${SHORT(arr[1][0])}(${(arr[1][1][k]/NSUMALL[k]*100).toFixed(1)}%)의 약 ${(NAT["경기도"][k]/arr[1][1][k]).toFixed(1)}배 · 수도권(서울·인천·경기) ${((NAT["경기도"][k]+NAT["서울특별시"][k]+NAT["인천광역시"][k])/NSUMALL[k]*100).toFixed(1)}%</span>`;
+  document.getElementById("natbars").innerHTML=arr.map(([s,v])=>
+    `<div class="nb${s==="경기도"?" gg":""}"><span class="nn">${SHORT(s)}</span><span class="t"><i style="width:${(v[k]/max*100).toFixed(1)}%"></i></span><span class="nv">${fmt(v[k])}<small>${(v[k]/NSUMALL[k]*100).toFixed(1)}%</small></span></div>`).join("");
+  document.querySelectorAll("#natseg button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.k===k));
+}
+document.querySelectorAll("#natseg button").forEach(b=>b.addEventListener("click",()=>{natK=+b.dataset.k; renderNat();}));
+renderNat();
+
 document.getElementById("stats").innerHTML=[
-  [fmt(TOT.n),"경기도 등록 공장(개)"],[fmt(TOT.emp),"종업원(명)"],
+  [ggShare(0).toFixed(1)+"%",`전국 등록 공장 ${fmt(NSUMALL[0])}개 중 경기도 비중`],
+  [fmt(TOT.n),"경기도 등록 공장(개)"],[fmt(TOT.emp),`종업원(명) · 전국의 ${ggShare(1).toFixed(1)}%`],
   [(TOT.small/TOT.n*100).toFixed(1)+"%","소기업 비중"],
   [(top3.reduce((s,[,v])=>s+v.n,0)/TOT.n*100).toFixed(1)+"%",`상위 3곳 집중도 (${top3.map(x=>x[0].replace(/시$/,"")).join("·")})`],
   [(inCx/TOT.n*100).toFixed(1)+"%","산업단지 입주 비중"],
